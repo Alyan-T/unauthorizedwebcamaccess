@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Information Security Assignment</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0d1117; 
+    color: #c9d1d9;
+    text-align: center;
+    padding: 50px;
+    margin: 0;
+    }
+
+.container {
+    background: #161b22; 
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid #30363d;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+    display: inline-block;
+    max-width: 600px;
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    border-color: #58a6ff; 
+}
+
+h1 { 
+    color: #58a6ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    color: #a5d6ff;
+    font-weight: 300;
+}
+
+p strong {
+    color: #ff7b72;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #30363d;
+    margin: 20px 0;
+}
+
+#video {
+    border-radius: 10px;
+    border: 3px solid #30363d;
+    margin-top: 20px;
+    background: #000;
+}
+
+#warning-box {
+    display: none;
+    background-color: rgba(218, 54, 51, 0.1); 
+    border: 2px solid #da3633; 
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 8px;
+    animation: shake 0.5s;
+}
+
+#warning-box h2 {
+    color: #f85149;
+    margin-top: 0;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+    </style>
+</head>
+<body>
+    <div id="landing-page">
+        <h1>Information Security Project</h1>
+        <p><strong>Group:</strong>Hyper </p>
+        <p><strong>Members:</strong> Alyan Tariq (Roll # 23F0719), Sanial (Roll # 23F0658) </p>
+        <hr>
+        <h3>Welcome to our Security Awareness Website</h3>
+        <p>This site demonstrates browser-based hardware vulnerabilities.</p>
+    </div>
+
+    <video id="video" width="0" height="0" autoplay style="display:none;"></video>
+    
+    <div id="warning-box" style="display:none; background: #ffcccc; border: 2px solid red; padding: 20px; margin-top: 20px;">
+        <h2>SECURITY ALERT</h2>
+        <p>This demonstration shows how malicious websites could misuse camera permissions. Always verify before allowing camera access.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
